@@ -39,8 +39,12 @@ io.on('connection', function(socket){
 
   socket.on('chatMessage', function (msg) {
     console.log(`client say "${msg}"`)
+    console.log(socket.id)
 
-    io.emit('serverMessage',msg);
+    io.emit('serverMessage',{
+      message : msg,
+      nickname : socket.id
+    });
   })
 });
 
