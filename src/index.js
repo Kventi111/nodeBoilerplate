@@ -27,6 +27,11 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 
+  socket.join('room 666', () => {
+    let rooms = Object.keys(socket.rooms);
+    console.log(rooms); // [ <socket.id>, 'room 237' ]
+  });
+
   socket.broadcast.emit('userConnected', {
     data : `userConnected ${socket.id}`
   })  
@@ -43,6 +48,22 @@ io.on('connection', function(socket){
 
     io.emit('serverMessage',{
       message : msg,
+      nickname : socket.id
+    });
+  })  
+
+  socket.on('privateMessage', function ({ message,id }) {
+    console.log(socket.id)
+    console.log(message)
+    console.log(id)
+
+    if (id === socket.id) {
+      console.log({ id })
+      socket.to(id).emit('error', 'Ты пытаешься написать самому себе ????');
+    }
+
+    socket.to(id).emit('personalMessage', {
+      message,
       nickname : socket.id
     });
   })
